@@ -1,0 +1,24 @@
+{
+  "name": "et-electron",
+  "version": "1.0.0",
+  "description": "eagle.tunnel client using electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "packager": "electron-packager . et-electron --platform=linux --arch=x64 --out=./Package --electron-version=3.0.2 --overwrite --icon=./img/icon.ico"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konnyakuxzy/et-electron.git"
+  },
+  "keywords": [
+    "proxy",
+    "eagle-tunnel"
+  ],
+  "author": "XZYQvQ",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/konnyakuxzy/et-electron/issues"
+  },
+  "homepage": "https://github.com/konnyakuxzy/et-electron#readme"
+}

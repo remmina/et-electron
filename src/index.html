@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<link rel="stylesheet" type="text/css" href="./mdui/css/mdui.css">
+	<script src="./mdui/js/mdui.js"></script>
+	<title>ET-electron</title>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink">
+	<div class="mdui-container doc-container">
+		<center><img src="img/logo.png"></center>
+		<div class="mdui-textfield">
+			<label class="mdui-textfield-label">服务器IP</label>
+			<input id="rmtip" class="mdui-textfield-input" type="text"/>
+		</div>
+		<div class="mdui-textfield">
+			<label class="mdui-textfield-label">服务器端口</label>
+			<input id="rmtcom" class="mdui-textfield-input" type="text"/>
+		</div><br/>
+		<div class="mdui-divider"></div><br/>
+		<label class="mdui-checkbox">
+			<input id="socks" type="checkbox"/>
+			<i class="mdui-checkbox-icon"></i>
+			Socks
+		</label><br/>
+		<label class="mdui-checkbox">
+			<input id="http" type="checkbox"/>
+			<i class="mdui-checkbox-icon"></i>
+			Http(s)
+		</label><br/>
+		<label class="mdui-checkbox">
+			<input id="et" type="checkbox"/>
+			<i class="mdui-checkbox-icon"></i>
+			Et
+		</label>
+		<br/><br/><div class="mdui-divider"></div><br/>
+		<div class="mdui-textfield">
+			<label class="mdui-textfield-label">本地端口</label>
+			<input id="loccom" class="mdui-textfield-input" type="text"/>
+		</div>
+		<div class="mdui-textfield">
+			<label class="mdui-textfield-label">用户名（不填则不启用）</label>
+			<input id="user" class="mdui-textfield-input" type="text"/>
+		</div>
+		<div class="mdui-textfield">
+			<label class="mdui-textfield-label">密码</label>
+			<input id="passwd" class="mdui-textfield-input" type="password"/>
+		</div>
+		<br/><div class="mdui-divider"></div><br/>
+		<label class="mdui-checkbox">
+			<input id="share" type="checkbox"/>
+			<i class="mdui-checkbox-icon"></i>
+			局域网分享
+		</label><br/>
+		<label class="mdui-checkbox">
+			<input id="smart" type="checkbox"/>
+			<i class="mdui-checkbox-icon"></i>
+			智能分流
+		</label>
+		<br/><br/><div class="mdui-divider"></div><br/>
+		<button id='save' class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-btn-block">
+			保存配置
+		</button>
+	</div>
+	<br/>
+</body>
+<script src="js/contrl.js"></script>
+</html>
