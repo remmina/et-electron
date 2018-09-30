@@ -51,17 +51,17 @@ function createWin(){
 
 let appIcon = null;
 
-let aut = null;
+var aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
 
-function createappIcon()
+function makeMenu()
 {
-	aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
-	const template = [
+	return Menu.buildFromTemplate([
 		{
 			label: '操作',
 			submenu: [
 				{
 					label: '连接',
+					id: 'menuCnct',
 					type: 'radio',
 					checked: aut == 1 ? true : false,
 					click: () => {
@@ -76,6 +76,7 @@ function createappIcon()
 				},
 				{
 					label: '断开',
+					id: 'menuDis',
 					type: 'radio',
 					checked: aut == 1 ? false : true,
 					click: () => {
@@ -91,7 +92,18 @@ function createappIcon()
 			checked : aut == 1 ? true : false,
 			click: () => {
 				if (aut == 1) aut = 0;
-				else aut = 1;
+				else
+				{
+					aut = 1;
+					if (prc == null)
+					{
+						if (process.platform == 'linux')
+							prc = spawn(coreLinux, [coreCfg]);
+						else
+							prc = spawn(coreWin32, [coreCfg]);
+					}
+					appIcon.setContextMenu(makeMenu());
+				}
 				fs.writeFile(autoPath, aut.toString(), 'utf-8', function (err){
 					if (err) msg('Can not write auto.conf!');
 				});
@@ -111,11 +123,14 @@ function createappIcon()
 				app.quit();
 			}
 		}
-	];
-	const contextMenu = Menu.buildFromTemplate(template);
+	]);
+}
+
+function createappIcon()
+{
 	appIcon = new Tray(iconPath);
 	appIcon.setTitle('Et-electron');
-	appIcon.setContextMenu(contextMenu);
+	appIcon.setContextMenu(makeMenu());
 	if (aut)
 	{
 		if (process.platform == 'linux')
@@ -126,5 +141,4 @@ function createappIcon()
 }
 
 app.on('ready', createappIcon);
-
 app.on('window-all-closed', e => e.preventDefault());
