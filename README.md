@@ -16,8 +16,9 @@
 
 现阶段支持的系统：
 
-+ Windows 32位/64位
 + Linux 64位
++ Windows 64位
++ Windows 32位（仅在Win10中测试过）
 
 # 使用
 
