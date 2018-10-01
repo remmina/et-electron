@@ -6,8 +6,6 @@
 
 基于：[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)开发
 
-前端基于[MDUI](https://github.com/zdhxiong/mdui)
-
 ~~由一个只会写C++、对js基本0基础的高中生用electron花了一天半编写~~
 
 
@@ -18,9 +16,8 @@
 
 现阶段支持的系统：
 
-+ Linux 64位
 + Windows 64位
-+ Windows 32位（仅在Win10中测试过）
++ Linux 64位
 
 # 使用
 
@@ -59,17 +56,23 @@
 
 点击托盘图标。
 
-在弹出来的菜单中勾选“自动连接”，这样程序会立即启动连接（如果连接还未启动），并且每次程序启动时都会自动启动连接。
+在弹出来的菜单中勾选“自动连接”，这样在下次程序启动时会自动根据您的配置连接服务器。
 
 这样您就可以将ET-electron设为开机启动项后自动开启服务了。
 
+
+
+# 截图
+
+![](./ReadMeImg/shot1.png)
+
+![](./ReadMeImg/shot2.png)
+
 # 鸣谢
 
-感谢[eaglexiang](https://github.com/eaglexiang/eagle.tunnel.go/commits?author=eaglexiang)大佬开发的[eagle.tunnel.go项目](https://github.com/eaglexiang/eagle.tunnel.go)，没有这个项目便没有ET-electron。~~这不是废话吗~~
+感谢[eaglexiang](https://github.com/eaglexiang/eagle.tunnel.go/commits?author=eaglexiang)大佬开发的[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)项目，没有这个项目便没有ET-electron。~~这不是废话吗~~
 
 感谢[electron项目](https://github.com/electron/electron)，没有这个项目作者便不会接触到js。
-
-感谢[MDUI项目](https://github.com/zdhxiong/mdui)，提供了美观的前端框架以及详细的开发文档。
 
 
 
