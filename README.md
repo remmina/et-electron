@@ -6,6 +6,8 @@
 
 基于：[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)开发
 
+前端基于[MDUI](https://github.com/zdhxiong/mdui)
+
 ~~由一个只会写C++、对js基本0基础的高中生用electron花了一天半编写~~
 
 
@@ -73,6 +75,8 @@
 感谢[eaglexiang](https://github.com/eaglexiang/eagle.tunnel.go/commits?author=eaglexiang)大佬开发的[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)项目，没有这个项目便没有ET-electron。~~这不是废话吗~~
 
 感谢[electron项目](https://github.com/electron/electron)，没有这个项目作者便不会接触到js。
+
+感谢[MDUI项目](https://github.com/zdhxiong/mdui)，提供了美观的前端框架以及详细的开发文档。
 
 
 
