@@ -6,34 +6,45 @@
 	<script src="./mdui/js/mdui.js"></script>
 	<title>ET-electron</title>
 </head>
-<body class="mdui-theme-primary-indigo mdui-theme-accent-pink">
-	<div class="mdui-container doc-container">
-		<center><img src="img/logo.png"></center>
-		<div class="mdui-textfield">
-			<label class="mdui-textfield-label">服务器IP</label>
-			<input id="rmtip" class="mdui-textfield-input" type="text"/>
+<style>
+	input {-webkit-app-region: no-drag;}
+	button {-webkit-app-region: no-drag;}
+	label {-webkit-app-region: no-drag;}
+</style>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink" style="-webkit-app-region: drag">
+	<div class="mdui-appbar">
+			<div class="mdui-toolbar mdui-color-theme">
+				<img class="mdui-img-fluid" src="img/48x48.png"/>
+				<h2>Eagle-Tunnel</h2>
+				<div class="mdui-toolbar-spacer"></div>
+				<button id="clsbtn" class="mdui-fab mdui-fab-mini mdui-color-theme-accent mdui-ripple">
+					<i class="mdui-icon material-icons">close</i>
+				</button>
+			</div>
 		</div>
-		<div class="mdui-textfield">
+	<div class="mdui-container doc-container">
+		<div class="mdui-textfield" style="width:45%; float:left">
+			<label class="mdui-textfield-label">服务器IP</label>
+			<input id="rmtip" class="mdui-textfield-input"type="text"/>
+		</div>
+		<div class="mdui-textfield" style="width:45%; float:right">
 			<label class="mdui-textfield-label">服务器端口</label>
 			<input id="rmtcom" class="mdui-textfield-input" type="text"/>
 		</div><br/>
-		<div class="mdui-divider"></div><br/>
+		<div class="mdui-textfield" style="width:100%">
+			<label class="mdui-textfield-label">自定义协议头</label>
+			<input id="rmthead" class="mdui-textfield-input" type="text"/>
+		</div>
 		<label class="mdui-checkbox">
 			<input id="socks" type="checkbox"/>
 			<i class="mdui-checkbox-icon"></i>
-			Socks
+			Socks5协议
 		</label><br/>
 		<label class="mdui-checkbox">
 			<input id="http" type="checkbox"/>
 			<i class="mdui-checkbox-icon"></i>
-			Http(s)
-		</label><br/>
-		<label class="mdui-checkbox">
-			<input id="et" type="checkbox"/>
-			<i class="mdui-checkbox-icon"></i>
-			Et
+			Http(s)协议
 		</label>
-		<br/><br/><div class="mdui-divider"></div><br/>
 		<div class="mdui-textfield">
 			<label class="mdui-textfield-label">本地端口</label>
 			<input id="loccom" class="mdui-textfield-input" type="text"/>
@@ -46,7 +57,6 @@
 			<label class="mdui-textfield-label">密码</label>
 			<input id="passwd" class="mdui-textfield-input" type="password"/>
 		</div>
-		<br/><div class="mdui-divider"></div><br/>
 		<label class="mdui-checkbox">
 			<input id="share" type="checkbox"/>
 			<i class="mdui-checkbox-icon"></i>
@@ -57,7 +67,7 @@
 			<i class="mdui-checkbox-icon"></i>
 			智能分流
 		</label>
-		<br/><br/><div class="mdui-divider"></div><br/>
+		<br/><div class="mdui-divider"></div><br/>
 		<button id='save' class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-btn-block">
 			保存配置
 		</button>

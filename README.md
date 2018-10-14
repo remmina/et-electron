@@ -66,9 +66,7 @@
 
 # 截图
 
-![](./ReadMeImg/shot1.png)
-
-![](./ReadMeImg/shot2.png)
+![](./ReadMeImg/shot.png)
 
 # 鸣谢
 

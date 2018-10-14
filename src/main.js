@@ -32,11 +32,17 @@ ipcMain.on('asynchronous-message', (event, arg) => {
 	msg(arg);
 })
 
+ipcMain.on('close-message', (event, arg) => {
+	win.close();
+})
+
 function createWin(){
 	const winCfg =
 	{
-		width : 500,
-		height : 400,
+		width : 340,
+		height : 660,
+		frame: false,
+		resizable: false,
 		icon : iconPath
 	};
 	win = new BrowserWindow(winCfg);
