@@ -1,3 +1,5 @@
+/* Main program of et-electron */
+
 const {app, BrowserWindow, Menu, Tray, ipcMain, dialog} = require('electron');
 
 const path = require('path');
@@ -6,16 +8,20 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-let prc = null;
+let prc = null; /* et.go process */
 
-let win = null;
+let win = null; /* main window */
 
+let askwin = null; /* ask window */
+
+/* Path config */
 const iconPath = path.join(__dirname, 'img/256x256.png');
 const autoPath = path.join(__dirname, 'config/auto.conf');
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreWin32 = path.join(__dirname, 'core/et.go.exe');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
 
+/* Show a message box */
 function msg(str)
 {
 	const options =
@@ -28,12 +34,19 @@ function msg(str)
   dialog.showMessageBox(options);
 }
 
+/* Received a message */
 ipcMain.on('asynchronous-message', (event, arg) => {
 	msg(arg);
 })
 
+/* Clicked main window's close button */
 ipcMain.on('close-message', (event, arg) => {
 	win.close();
+})
+
+/* Clicked ask window's close button */
+ipcMain.on('close-ask', (event, arg) => {
+	askwin.close();
 })
 
 function createWin(){
@@ -50,8 +63,27 @@ function createWin(){
 	win.setMenu(null);
 	const idx = path.join(__dirname, 'index.html');
 	win.loadURL('file://' + idx);
-	win.on('close',() => {
+	win.on('close', () => {
 		win = null;
+	});
+}
+
+function createAsk(){
+	const winCfg =
+	{
+		width : 500,
+		height : 440,
+		frame: false,
+		resizable: false,
+		icon : iconPath
+	};
+	askwin = new BrowserWindow(winCfg);
+	//askwin.webContents.openDevTools();
+	askwin.setMenu(null);
+	const idx = path.join(__dirname, 'ask.html');
+	askwin.loadURL('file://' + idx);
+	askwin.on('close', () => {
+		askwin = null;
 	});
 }
 
@@ -116,6 +148,12 @@ function makeMenu()
 			}
 		},
 		{
+			label: '测试(ask)',
+			click: () => {
+				if (askwin == null) createAsk();
+			}
+		},
+		{
 			label: '配置',
 			click: () => {
 				if (win == null) createWin();
@@ -125,13 +163,15 @@ function makeMenu()
 			label: '退出',
 			click: () => {
 				if (prc != null) prc.kill();
-				if (win != null) win = null;
+				if (win != null) win.close();
+				if (askwin != null) askwin.close();
 				app.quit();
 			}
 		}
 	]);
 }
 
+/* Creat tray icon */
 function createappIcon()
 {
 	appIcon = new Tray(iconPath);

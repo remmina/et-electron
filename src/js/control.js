@@ -1,12 +1,17 @@
+/* Read and write config files */
+
 const {ipcRenderer} = require('electron');
 
 const readline = require('readline');
 const fs = require('fs');
 
 const path = require('path');
+
+/* Path config */
 const cfgPath = path.join(__dirname, 'config/config.conf');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
 
+/* Get elements */
 var rmtip = document.getElementById('rmtip');
 var rmtcom = document.getElementById('rmtcom');
 var rmthead = document.getElementById('rmthead');
@@ -18,13 +23,13 @@ var passwd = document.getElementById('passwd');
 var share = document.getElementById('share');
 var smart = document.getElementById('smart');
 
-let data = null;
-let flag = null;
-
+/* Read line */
 const rl = readline.createInterface({input: fs.createReadStream(cfgPath)});
 
+/* Line number count */
 var cnt = 1;
 
+/* Read config file */
 rl.on('line', (line) => {
 	switch (cnt)
 	{
@@ -62,11 +67,17 @@ rl.on('line', (line) => {
 	cnt++;
 });
 
+/* Send a message */
 function msg(str)
 {
 	ipcRenderer.send('asynchronous-message', str);
 }
 
+let data = null; /* Config file's data */
+
+let flag = null; /* true -> success false -> unsuccess */
+
+/* Save config file */
 document.getElementById('save').addEventListener('click', function () {
 	if (rmthead.value == '') msg('自定义协议头不能为空！');
 	else
@@ -112,6 +123,7 @@ document.getElementById('save').addEventListener('click', function () {
 	}
 });
 
+/* Clicked close button */
 document.getElementById('clsbtn').addEventListener('click', function () {
 	ipcRenderer.send('close-message');
 });
