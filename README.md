@@ -44,7 +44,7 @@
 
 接着按您的服务器配置设置您的程序配置即可。
 
-请不要在程序处在“连接”状态时更改您的配置，否则配置将无法生效。
+**请不要在程序处在“连接”状态时更改您的配置，否则配置将无法生效。**
 
 
 
@@ -66,29 +66,37 @@
 
 
 
-## 测试服务
+## 测试服务(check)
 
 这个功能可以用于测试et服务是否工作正常，或者更轻松地判断问题所在之处。
 
 点击托盘图标。
 
-在弹出来的菜单中单击“测试(ask)”
+在弹出来的菜单中单击“check”
 
 用于调用内建的检查指令的图形化界面将会弹出。
 
-在界面中你将会看到“AUTH”按钮与“PING”按钮。
+在界面中你将会看到“AUTH,VERSION,PING”三个TAB分页。
 
-单击“AUTH”按钮将会调用内建指令：`[et.go] ask local auth [client.conf]`
+单击“AUTH”按钮将会调用内建指令：`[et.go] check auth -c [client.conf]`
 
-单击“PING”按钮将会调用内建指令：`[et.go] ask local PING [client.conf]`
+单击“VERSION”按钮将会调用内建指令：`[et.go] check version -c [client.conf]`
 
-调用指令的返回结果将会在界面中的“测试输出”文本框内实时显示。
+单击“PING”按钮将会调用内建指令：`[et.go] check ping -c [client.conf]`
+
+调用指令的返回结果将会在界面中的“ET输出”文本框内实时显示。
+
+
 
 # 截图
 
 ![](./ReadMeImg/shot1.png)
 
 ![](./ReadMeImg/shot2.png)
+
+![](./ReadMeImg/shot3.png)
+
+![](./ReadMeImg/shot4.png)
 
 # 鸣谢
 

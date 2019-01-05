@@ -6,68 +6,82 @@
 	<script src="./mdui/js/mdui.js"></script>
 	<title>ET-electron</title>
 </head>
-<body class="mdui-theme-primary-pink mdui-theme-accent-cyan mdui-theme-layout-dark">
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue mdui-theme-layout-dark">
 	<div class="mdui-appbar" style="-webkit-app-region: drag">
 		<div class="mdui-toolbar mdui-color-theme">
-			<img class="mdui-img-fluid" src="img/48x48.png"/>
-			<h2>Eagle-Tunnel</h2>
+			<a href="javascript:;" class="mdui-btn mdui-btn-icon"><img class="mdui-img-fluid" src="img/48x48.png"/></a>
+			<a href="javascript:;" class="mdui-typo-title">Eagle-Tunnel</a>
 			<div class="mdui-toolbar-spacer"></div>
 			<button id="clsbtn" class="mdui-fab mdui-fab-mini mdui-color-theme-accent mdui-ripple" style="-webkit-app-region: no-drag">
 				<i class="mdui-icon material-icons">close</i>
 			</button>
 		</div>
 	</div>
+	<div class="mdui-tab mdui-color-theme" mdui-tab>
+		<a href="#rmttab" class="mdui-ripple mdui-ripple-white">连接设置</a>
+		<a href="#loctab" class="mdui-ripple mdui-ripple-white">本地设置</a>
+		<a href="#usrtab" class="mdui-ripple mdui-ripple-white">用户设置</a>
+	</div>
 	<div class="mdui-container doc-container">
-		<div class="mdui-textfield" style="width:55%; float:left">
-			<label class="mdui-textfield-label">服务器IP</label>
-			<input id="rmtip" class="mdui-textfield-input"type="text"/>
+		<div id="rmttab" class="mdui-p-a-2" style="height: 210px">
+				<div class="mdui-textfield">
+				<label class="mdui-textfield-label">服务器IP</label>
+				<input id="rmtip" class="mdui-textfield-input"type="text"/>
+			</div>
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">服务器端口</label>
+				<input id="rmtcom" class="mdui-textfield-input" type="text"/>
+			</div>
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">自定义协议头</label>
+				<input id="rmthead" class="mdui-textfield-input" type="text"/>
+			</div>
 		</div>
-		<div class="mdui-textfield" style="width:35%; float:right">
-			<label class="mdui-textfield-label">服务器端口</label>
-			<input id="rmtcom" class="mdui-textfield-input" type="text"/>
-		</div><br/>
-		<div class="mdui-textfield" style="width:100%">
-			<label class="mdui-textfield-label">自定义协议头</label>
-			<input id="rmthead" class="mdui-textfield-input" type="text"/>
+		<div id="loctab" class="mdui-p-a-2" style="height: 210px">
+			<label class="mdui-checkbox">
+				<input id="socks" type="checkbox"/>
+				<i class="mdui-checkbox-icon"></i>
+				Socks5协议
+			</label><br/>
+			<label class="mdui-checkbox">
+				<input id="http" type="checkbox"/>
+				<i class="mdui-checkbox-icon"></i>
+				Http(s)协议
+			</label>
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">本地端口</label>
+				<input id="loccom" class="mdui-textfield-input" type="text"/>
+			</div>
+			<label class="mdui-checkbox">
+				<input id="share" type="checkbox"/>
+				<i class="mdui-checkbox-icon"></i>
+				局域网分享
+			</label><br/>
+			<label class="mdui-checkbox">
+				<input id="smart" type="checkbox"/>
+				<i class="mdui-checkbox-icon"></i>
+				智能分流
+			</label>
 		</div>
-		<label class="mdui-checkbox">
-			<input id="socks" type="checkbox"/>
-			<i class="mdui-checkbox-icon"></i>
-			Socks5协议
-		</label><br/>
-		<label class="mdui-checkbox">
-			<input id="http" type="checkbox"/>
-			<i class="mdui-checkbox-icon"></i>
-			Http(s)协议
-		</label>
-		<div class="mdui-textfield">
-			<label class="mdui-textfield-label">本地端口</label>
-			<input id="loccom" class="mdui-textfield-input" type="text"/>
+		<div id="usrtab" class="mdui-p-a-2" style="height: 210px">
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">用户名（留空则不启用）</label>
+				<input id="user" class="mdui-textfield-input" type="text"/>
+			</div>
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">密码</label>
+				<input id="passwd" class="mdui-textfield-input" type="password"/>
+			</div>
+			<div class="mdui-textfield">
+				<label class="mdui-textfield-label">用户限速[kb/s]（留空则不作限制）</label>
+				<input id="speed" class="mdui-textfield-input" type="text"/>
+			</div>
 		</div>
-		<div class="mdui-textfield">
-			<label class="mdui-textfield-label">用户名（不填则不启用）</label>
-			<input id="user" class="mdui-textfield-input" type="text"/>
-		</div>
-		<div class="mdui-textfield">
-			<label class="mdui-textfield-label">密码</label>
-			<input id="passwd" class="mdui-textfield-input" type="password"/>
-		</div>
-		<label class="mdui-checkbox">
-			<input id="share" type="checkbox"/>
-			<i class="mdui-checkbox-icon"></i>
-			局域网分享
-		</label><br/>
-		<label class="mdui-checkbox">
-			<input id="smart" type="checkbox"/>
-			<i class="mdui-checkbox-icon"></i>
-			智能分流
-		</label>
 		<br/><div class="mdui-divider"></div><br/>
 		<button id='save' class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-btn-block">
-			保存配置
+				保存配置
 		</button>
 	</div>
-	<br/>
 </body>
 <script src="js/control.js"></script>
 </html>

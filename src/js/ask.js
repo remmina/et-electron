@@ -22,9 +22,22 @@ document.getElementById('auth').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
 	if (process.platform == 'linux')
-		prc = spawn(coreLinux, ['ask', 'local', 'auth', coreCfg]);
+		prc = spawn(coreLinux, ['check', 'auth', '-c', coreCfg]);
 	else
-		prc = spawn(coreWin32, ['ask', 'local', 'auth', coreCfg]);
+		prc = spawn(coreWin32, ['check', 'auth', '-c', coreCfg]);
+	prc.stdout.on('data', (data) => {
+		output.value += data.toString();
+	});
+});
+
+/* Clicked version button */
+document.getElementById('vers').addEventListener('click', function () {
+	output.value = "";
+	if (prc != null) prc.kill();
+	if (process.platform == 'linux')
+		prc = spawn(coreLinux, ['check', 'version', '-c', coreCfg]);
+	else
+		prc = spawn(coreWin32, ['check', 'version', '-c', coreCfg]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
@@ -35,9 +48,9 @@ document.getElementById('ping').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
 	if (process.platform == 'linux')
-		prc = spawn(coreLinux, ['ask', 'local', 'ping', coreCfg]);
+		prc = spawn(coreLinux, ['check', 'ping', '-c', coreCfg]);
 	else
-		prc = spawn(coreWin32, ['ask', 'local', 'ping', coreCfg]);
+		prc = spawn(coreWin32, ['check', 'ping', '-c', coreCfg]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});

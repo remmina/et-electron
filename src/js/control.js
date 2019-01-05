@@ -22,6 +22,7 @@ var user = document.getElementById('user');
 var passwd = document.getElementById('passwd');
 var share = document.getElementById('share');
 var smart = document.getElementById('smart');
+var speed = document.getElementById('speed');
 
 /* Read line */
 const rl = readline.createInterface({input: fs.createReadStream(cfgPath)});
@@ -51,13 +52,14 @@ rl.on('line', (line) => {
 		case 6 : loccom.value = line; break;
 		case 7 : user.value = line; break;
 		case 8 : passwd.value = line; break;
-		case 9 :
+		case 9 : speed.value = line; break;
+		case 10 :
 		{
 			if (line == '1') share.checked = 1;
 			else share.checked = 0;
 			break;
 		}
-		case 10 :
+		case 11 :
 		{
 			if (line == '1') smart.checked = 1;
 			else smart.checked = 0;
@@ -91,6 +93,7 @@ document.getElementById('save').addEventListener('click', function () {
 		data += '\n' + loccom.value;
 		data += '\n' + user.value;
 		data += '\n' + passwd.value;
+		data += '\n' + speed.value;
 		if (share.checked) data += '\n1';
 		else data += '\n0';
 		if (smart.checked) data += '\n1';
@@ -114,8 +117,11 @@ document.getElementById('save').addEventListener('click', function () {
 		if (smart.checked) data += 'proxy-status=smart\n';
 		else data += 'proxy-status=enable\n';
 		if (user.value != '')
-			data += 'user=' + user.value + ':' + passwd.value + '\n';
-		
+		{
+			data += 'user=' + user.value + ':' + passwd.value;
+			if (speed.value != '') data += ':' + speed.value + '\net = on\nspeed-check = on';
+			data += '\n';
+		}
 		fs.writeFile(coreCfg, data, 'utf-8', function(err) {
 			if (err) msg('Can not write client.conf!'), flag = false;
 		});

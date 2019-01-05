@@ -9,11 +9,13 @@
 # 以尾部匹配的方式实现域名的匹配，实现类似母域名匹配的效果，例如：
 # a.com 可以匹配 a.com b.a.com c.b.a.com 等
 # 使用者应自行决定是否避免 a.com 匹配 ba.com 的异常
+akamaized.net
 amazonaws.com
 bbc.com
 bbc.co.uk
 bbci.co.uk
 jp
+cloudfront.net
 creaders.net
 facebook.com
 facebook.net
@@ -30,6 +32,7 @@ googlevideo.com
 googlesource.com
 gstatic.com
 instagram.com
+jtvnw.net
 mastodon.social
 nytimes.com
 nyti.ms
@@ -39,13 +42,15 @@ reddit.com
 steampowered.com
 steamcommunity.com
 telegram.org
+ttvnw.net 
 tumblr.com
-txmblr.com
 tw
 twitter.com
 twitch.tv
+twitchcdn.net
 twitchsvc.net
 twimg.com
+txmblr.com
 voachinese.com
 voanews.com
 wikipedia.org

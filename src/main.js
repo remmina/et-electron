@@ -34,6 +34,18 @@ function msg(str)
   dialog.showMessageBox(options);
 }
 
+/* Create Child Process */
+function make_prc()
+{
+	if (prc == null)
+	{
+		if (process.platform == 'linux')
+			prc = spawn(coreLinux, ['--config', coreCfg]);
+		else
+			prc = spawn(coreWin32, ['--config', coreCfg]);
+	}
+}
+
 /* Received a message */
 ipcMain.on('asynchronous-message', (event, arg) => {
 	msg(arg);
@@ -53,7 +65,7 @@ function createWin(){
 	const winCfg =
 	{
 		width : 340,
-		height : 660,
+		height : 432,
 		frame: false,
 		resizable: false,
 		icon : iconPath
@@ -71,8 +83,8 @@ function createWin(){
 function createAsk(){
 	const winCfg =
 	{
-		width : 500,
-		height : 440,
+		width : 430,
+		height : 435,
 		frame: false,
 		resizable: false,
 		icon : iconPath
@@ -103,13 +115,7 @@ function makeMenu()
 					type: 'radio',
 					checked: aut == 1 ? true : false,
 					click: () => {
-						if (prc == null)
-						{
-							if (process.platform == 'linux')
-								prc = spawn(coreLinux, [coreCfg]);
-							else
-								prc = spawn(coreWin32, [coreCfg]);
-						}
+						make_prc();
 					}
 				},
 				{
@@ -133,13 +139,7 @@ function makeMenu()
 				else
 				{
 					aut = 1;
-					if (prc == null)
-					{
-						if (process.platform == 'linux')
-							prc = spawn(coreLinux, [coreCfg]);
-						else
-							prc = spawn(coreWin32, [coreCfg]);
-					}
+					make_prc();
 					appIcon.setContextMenu(makeMenu());
 				}
 				fs.writeFile(autoPath, aut.toString(), 'utf-8', function (err){
@@ -148,7 +148,7 @@ function makeMenu()
 			}
 		},
 		{
-			label: '测试(ask)',
+			label: 'check',
 			click: () => {
 				if (askwin == null) createAsk();
 			}
@@ -177,13 +177,7 @@ function createappIcon()
 	appIcon = new Tray(iconPath);
 	appIcon.setTitle('Et-electron');
 	appIcon.setContextMenu(makeMenu());
-	if (aut)
-	{
-		if (process.platform == 'linux')
-			prc = spawn(coreLinux, [coreCfg]);
-		else
-			prc = spawn(coreWin32, [coreCfg]);
-	}
+	if (aut) make_prc();
 }
 
 app.on('ready', createappIcon);
