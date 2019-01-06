@@ -65,7 +65,7 @@ function createWin(){
 	const winCfg =
 	{
 		width : 340,
-		height : 432,
+		height : 440,
 		frame: false,
 		resizable: false,
 		icon : iconPath
@@ -84,7 +84,7 @@ function createAsk(){
 	const winCfg =
 	{
 		width : 430,
-		height : 435,
+		height : 440,
 		frame: false,
 		resizable: false,
 		icon : iconPath
