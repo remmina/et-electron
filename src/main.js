@@ -31,7 +31,7 @@ function msg(str)
 		message: str,
 		buttons: ['好的']
 	}
-  dialog.showMessageBox(options);
+	dialog.showMessageBox(options);
 }
 
 /* Create Child Process */
@@ -49,6 +49,11 @@ function make_prc()
 /* Received a message */
 ipcMain.on('asynchronous-message', (event, arg) => {
 	msg(arg);
+})
+
+/* Reconnect */
+ipcMain.on('reconnect-message', (event, arg) => {
+	if (prc != null) prc.kill(), prc = null, make_prc();
 })
 
 /* Clicked main window's close button */
@@ -101,7 +106,9 @@ function createAsk(){
 
 let appIcon = null;
 
-var aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
+var aut;
+
+/* Make menu */
 
 function makeMenu()
 {
@@ -143,7 +150,7 @@ function makeMenu()
 					appIcon.setContextMenu(makeMenu());
 				}
 				fs.writeFile(autoPath, aut.toString(), 'utf-8', function (err){
-					if (err) msg('Can not write auto.conf!');
+					if (err) msg('无法写入 auto.conf!');
 				});
 			}
 		},
@@ -172,7 +179,7 @@ function makeMenu()
 }
 
 /* Creat tray icon */
-function createappIcon()
+function createTray()
 {
 	appIcon = new Tray(iconPath);
 	appIcon.setTitle('Et-electron');
@@ -180,5 +187,29 @@ function createappIcon()
 	if (aut) make_prc();
 }
 
-app.on('ready', createappIcon);
+/* Init */
+function init()
+{
+	/* Check auto connect config file */
+	fs.exists(autoPath, function(exists){
+		if (exists) aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
+		else
+		{
+			fs.writeFile(autoPath, '0', 'utf-8', function(err) {
+				if (err) msg('无法写入 auto.conf!'), flag = false;
+				else aut = 0;
+			});
+		}
+	});
+	/* Check core config file */
+	fs.exists(coreCfg, function(exists) {
+		if (!exists)
+			fs.writeFile(coreCfg, 'listen=0.0.0.0', 'utf-8', function(err) {
+				if (err) msg('无法写入 client.conf!');
+			})
+	});
+	setTimeout(createTray, 1000);
+}
+
+app.on('ready', init);
 app.on('window-all-closed', e => e.preventDefault());

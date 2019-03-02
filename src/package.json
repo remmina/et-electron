@@ -1,6 +1,6 @@
 {
   "name": "et-electron",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "eagle.tunnel client using electron",
   "main": "main.js",
   "scripts": {
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/konnyakuxzy/et-electron.git"
+    "url": "git+https://github.com/remmina/et-electron.git"
   },
   "keywords": [
     "proxy",
     "eagle-tunnel"
   ],
-  "author": "XZYQvQ",
+  "author": "Remmina",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/konnyakuxzy/et-electron/issues"
+    "url": "https://github.com/remmina/et-electron/issues"
   },
-  "homepage": "https://github.com/konnyakuxzy/et-electron#readme"
+  "homepage": "https://github.com/remmina/et-electron#readme"
 }

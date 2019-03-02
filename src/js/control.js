@@ -24,55 +24,70 @@ var share = document.getElementById('share');
 var smart = document.getElementById('smart');
 var speed = document.getElementById('speed');
 
-/* Read line */
-const rl = readline.createInterface({input: fs.createReadStream(cfgPath)});
+/* Init */
 
-/* Line number count */
-var cnt = 1;
-
-/* Read config file */
-rl.on('line', (line) => {
-	switch (cnt)
+fs.exists(cfgPath, function(exists) {
+	if (!exists)
 	{
-		case 1 : rmtip.value = line; break;
-		case 2 : rmtcom.value = line; break;
-		case 3 : rmthead.value = line; break;
-		case 4 :
-		{
-			if (line == '1') socks.checked = 1;
-			else socks.checked = 0;
-			break;
-		}
-		case 5 :
-		{
-			if (line == '1') http.checked = 1;
-			else http.checked = 0;
-			break;
-		}
-		case 6 : loccom.value = line; break;
-		case 7 : user.value = line; break;
-		case 8 : passwd.value = line; break;
-		case 9 : speed.value = line; break;
-		case 10 :
-		{
-			if (line == '1') share.checked = 1;
-			else share.checked = 0;
-			break;
-		}
-		case 11 :
-		{
-			if (line == '1') smart.checked = 1;
-			else smart.checked = 0;
-			break;
-		}
+		rmtip.value = '127.0.0.1';
+		rmtcom.value = '8080';
+		socks.checked = http.checked = share.checked = 1;
+		loccom.value = '8080';
 	}
-	cnt++;
+	else
+	{
+		const rl = readline.createInterface({input: fs.createReadStream(cfgPath)});
+		var cnt = 1;
+		rl.on('line', (line) => {
+			switch (cnt)
+			{
+				case 1 : rmtip.value = line; break;
+				case 2 : rmtcom.value = line; break;
+				case 3 : rmthead.value = line; break;
+				case 4 :
+				{
+					if (line == '1') socks.checked = 1;
+					else socks.checked = 0;
+					break;
+				}
+				case 5 :
+				{
+					if (line == '1') http.checked = 1;
+					else http.checked = 0;
+					break;
+				}
+				case 6 : loccom.value = line; break;
+				case 7 : user.value = line; break;
+				case 8 : passwd.value = line; break;
+				case 9 : speed.value = line; break;
+				case 10 :
+				{
+					if (line == '1') share.checked = 1;
+					else share.checked = 0;
+					break;
+				}
+				case 11 :
+				{
+					if (line == '1') smart.checked = 1;
+					else smart.checked = 0;
+					break;
+				}
+			}
+			cnt++;
+		});
+	}
 });
 
 /* Send a message */
 function msg(str)
 {
 	ipcRenderer.send('asynchronous-message', str);
+}
+
+/* Reconnect */
+function reconnect()
+{
+	ipcRenderer.send('reconnect-message', '');
 }
 
 let data = null; /* Config file's data */
@@ -101,7 +116,7 @@ document.getElementById('save').addEventListener('click', function () {
 		
 		var fs = require('fs');
 		fs.writeFile(cfgPath, data, 'utf8', function(err) {
-			if (err) msg('Can not write config!'), flag = false;
+			if (err) msg('无法写入 config.conf！'), flag = false;
 		});
 		
 		data = 'listen=';
@@ -123,9 +138,9 @@ document.getElementById('save').addEventListener('click', function () {
 			data += '\n';
 		}
 		fs.writeFile(coreCfg, data, 'utf-8', function(err) {
-			if (err) msg('Can not write client.conf!'), flag = false;
+			if (err) msg('无法写入 client.conf!'), flag = false;
 		});
-		if (flag == true) msg('保存配置成功');
+		if (flag == true) msg('保存配置成功'), reconnect();
 	}
 });
 
