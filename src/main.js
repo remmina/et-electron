@@ -8,6 +8,8 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
+const appVersion = '1.5.0';
+
 let prc = null; /* et.go process */
 
 let win = null; /* main window */
@@ -164,6 +166,22 @@ function makeMenu()
 			label: '配置',
 			click: () => {
 				if (win == null) createWin();
+			}
+		},
+		{
+			label: '关于',
+			click: () => {
+				var tmp = 'Eagle Tunnel with GUI for Linux and Windows\n\n';
+				tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
+				tmp += 'Core version information :\n\n';
+				var vprc = null;
+				if (process.platform == 'linux')
+					vprc = spawn(coreLinux, ['-v']);
+				else vprc = spawn(coreWin32, ['-v']);
+				vprc.stdout.on('data', (data) => {
+					tmp += data.toString();
+				});
+				setTimeout(function() { msg(tmp); }, 500);
 			}
 		},
 		{
