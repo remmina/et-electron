@@ -20,8 +20,8 @@
 
 现阶段支持的系统：
 
-+ Windows 64位
-+ Linux 64位
++ Linux 64/32 位
++ Windows 64/32 位
 
 # 更新
 

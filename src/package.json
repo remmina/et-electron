@@ -1,12 +1,14 @@
 {
   "name": "et-electron",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "eagle.tunnel client using electron",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "package-linux": "electron-packager . et-electron --platform=linux --arch=x64 --out=./Package --electron-version=3.0.10 --overwrite --icon=./img/icon.ico",
-    "package-win": "electron-packager . et-electron --platform=win32 --arch=x64 --out=./Package --electron-version=3.0.10 --overwrite --icon=./img/icon.ico"
+    "package-linux-32": "electron-packager . et-electron --platform=linux --arch=ia32 --out=./Package --electron-version=3.0.10 --overwrite --icon=./img/icon.ico",
+    "package-win": "electron-packager . et-electron --platform=win32 --arch=x64 --out=./Package --electron-version=3.0.10 --overwrite --icon=./img/icon.ico",
+    "package-win-32": "electron-packager . et-electron --platform=win32 --arch=ia32 --out=./Package --electron-version=3.0.10 --overwrite --icon=./img/icon.ico"
   },
   "repository": {
     "type": "git",

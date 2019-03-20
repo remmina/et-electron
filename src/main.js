@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.5.0';
+const appVersion = '1.5.1';
 
 let prc = null; /* et.go process */
 
@@ -20,8 +20,23 @@ let askwin = null; /* ask window */
 const iconPath = path.join(__dirname, 'img/256x256.png');
 const autoPath = path.join(__dirname, 'config/auto.conf');
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
-const coreWin32 = path.join(__dirname, 'core/et.go.exe');
+const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
+const coreWin = path.join(__dirname, 'core/et.go.exe');
+const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
+
+let corePath = null;
+
+if (process.platform == 'linux')
+{
+	if (process.arch == 'x64') corePath = coreLinux;
+	else corePath = coreLinux_32;
+}
+else
+{
+	if (process.arch == 'x64') corePath = coreWin;
+	else corePath = coreWin_32;
+}
 
 /* Show a message box */
 function msg(str)
@@ -39,13 +54,7 @@ function msg(str)
 /* Create Child Process */
 function make_prc()
 {
-	if (prc == null)
-	{
-		if (process.platform == 'linux')
-			prc = spawn(coreLinux, ['--config', coreCfg]);
-		else
-			prc = spawn(coreWin32, ['--config', coreCfg]);
-	}
+	if (prc == null) prc = spawn(corePath, ['--config', coreCfg]);
 }
 
 /* Received a message */
@@ -174,10 +183,7 @@ function makeMenu()
 				var tmp = 'Eagle Tunnel with GUI for Linux and Windows\n\n';
 				tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
 				tmp += 'Core version information :\n\n';
-				var vprc = null;
-				if (process.platform == 'linux')
-					vprc = spawn(coreLinux, ['-v']);
-				else vprc = spawn(coreWin32, ['-v']);
+				var vprc = spawn(corePath, ['-v']);
 				vprc.stdout.on('data', (data) => {
 					tmp += data.toString();
 				});

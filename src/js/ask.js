@@ -8,8 +8,23 @@ const path = require('path');
 
 /* Path config */
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
-const coreWin32 = path.join(__dirname, 'core/et.go.exe');
+const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
+const coreWin = path.join(__dirname, 'core/et.go.exe');
+const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
+
+let corePath = null;
+
+if (process.platform == 'linux')
+{
+	if (process.arch == 'x64') corePath = coreLinux;
+	else corePath = coreLinux_32;
+}
+else
+{
+	if (process.arch == 'x64') corePath = coreWin;
+	else corePath = coreWin_32;
+}
 
 /* Child process */
 let prc = null;
@@ -21,10 +36,7 @@ var output = document.getElementById('output');
 document.getElementById('auth').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	if (process.platform == 'linux')
-		prc = spawn(coreLinux, ['check', 'auth', '-c', coreCfg]);
-	else
-		prc = spawn(coreWin32, ['check', 'auth', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'auth', '-c', coreCfg]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
@@ -34,10 +46,7 @@ document.getElementById('auth').addEventListener('click', function () {
 document.getElementById('vers').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	if (process.platform == 'linux')
-		prc = spawn(coreLinux, ['check', 'version', '-c', coreCfg]);
-	else
-		prc = spawn(coreWin32, ['check', 'version', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'version', '-c', coreCfg]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
@@ -47,10 +56,7 @@ document.getElementById('vers').addEventListener('click', function () {
 document.getElementById('ping').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	if (process.platform == 'linux')
-		prc = spawn(coreLinux, ['check', 'ping', '-c', coreCfg]);
-	else
-		prc = spawn(coreWin32, ['check', 'ping', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'ping', '-c', coreCfg]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
