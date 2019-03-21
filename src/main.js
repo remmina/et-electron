@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.5.1';
+const appVersion = '1.5.2';
 
 let prc = null; /* et.go process */
 
@@ -220,9 +220,10 @@ function init()
 		else
 		{
 			fs.writeFile(autoPath, '0', 'utf-8', function(err) {
-				if (err) msg('无法写入 auto.conf!'), flag = false;
+				if (err) msg('无法写入 auto.conf!');
 				else aut = 0;
 			});
+			createWin();
 		}
 	});
 	/* Check core config file */
