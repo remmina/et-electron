@@ -140,7 +140,8 @@ document.getElementById('save').addEventListener('click', function () {
 		fs.writeFile(coreCfg, data, 'utf-8', function(err) {
 			if (err) msg('无法写入 client.conf!'), flag = false;
 		});
-		if (flag == true) msg('保存配置成功'), reconnect();
+		if (flag == true) msg('保存配置成功');
+		setTimeout(reconnect, 1000);
 	}
 });
 
