@@ -8,7 +8,7 @@
 
 前端基于[MDUI](https://github.com/zdhxiong/mdui)
 
-~~由两个只会写C++、对js基本0基础的高中生用electron花了一天半编写~~
+~~由两个只会写C++、对js基本0基础的学生用electron花了一天半编写~~
 
 好吧到现在为止已经不止一天半了QwQ...
 
