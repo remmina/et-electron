@@ -11,11 +11,15 @@ const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
+const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
 
 let corePath = null;
 
-if (process.platform == 'linux')
+if(process.platform == 'darwin'){
+	corePath = coreDarwin_32
+}
+else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
 	else corePath = coreLinux_32;
