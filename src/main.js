@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.5.3';
+const appVersion = '1.6.0';
 
 let prc = null; /* et.go process */
 
@@ -138,16 +138,27 @@ let appIcon = null;
 
 var aut;
 
-function close() {
+let close = () => {
 	if (prc != null) prc.kill();
 	if (win != null) win.close();
 	if (askwin != null) askwin.close();
+}
+
+let click = () => {
+	var tmp = 'Eagle Tunnel with GUI for Linux, Windows and Mac \n\n';
+	tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
+	tmp += 'Core version information :\n\n';
+	var vprc = spawn(corePath, ['-v']);
+	vprc.stdout.on('data', (data) => {
+		tmp += data.toString();
+	});
+	setTimeout(function() { msg(tmp); }, 500);
 }
 /* Make menu */
 
 function makeMenu()
 {
-	return Menu.buildFromTemplate([
+	const template = [
 		{
 			label: '操作',
 			submenu: [
@@ -207,16 +218,7 @@ function makeMenu()
 		},
 		{
 			label: '关于',
-			click: () => {
-				var tmp = 'Eagle Tunnel with GUI for Linux and Windows\n\n';
-				tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
-				tmp += 'Core version information :\n\n';
-				var vprc = spawn(corePath, ['-v']);
-				vprc.stdout.on('data', (data) => {
-					tmp += data.toString();
-				});
-				setTimeout(function() { msg(tmp); }, 500);
-			}
+			click: click
 		},
 		{
 			label: '退出',
@@ -224,7 +226,41 @@ function makeMenu()
 				app.quit() // emit before-quit event
 			}
 		}
-	]);
+	]
+	if (process.platform === 'darwin') {
+		const systemMenu = Menu.buildFromTemplate([
+			{
+				label: app.getName(),
+				submenu: [
+					{label: 'about', click},
+					{type: 'separator'},
+					{role: 'services', submenu: []},
+					{type: 'separator'},
+					{role: 'hide'},
+					{role: 'hideothers'},
+					{role: 'unhide'},
+					{type: 'separator'},
+					{role: 'quit'}
+				]
+			},
+			{
+				label: '编辑',
+				submenu: [
+					{role: 'undo', label: '撤销'},
+					{role: 'redo', label: '重做'},
+					{type: 'separator'},
+					{role: 'cut', label: '剪切'},
+					{role: 'copy', label: '复制'},
+					{role: 'paste', label: '粘贴'},
+					{role: 'delete', label: '删除'},
+					{role: 'selectall', label: '全选'}
+				]
+			}
+		])
+		Menu.setApplicationMenu(systemMenu)
+	}
+
+	return Menu.buildFromTemplate(template);
 }
 
 /* Creat tray icon */
