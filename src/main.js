@@ -106,7 +106,10 @@ function createWin(){
 		}
 		win = null
 	})
-	// if (process === 'darwin') win.hide()
+
+	if (process.env.NODE_ENV === 'dev') {
+		win.webContents.openDevTools()
+	}
 }
 
 function createAsk(){
@@ -126,6 +129,9 @@ function createAsk(){
 	askwin.on('close', () => {
 		askwin = null;
 	});
+	if (process.env.NODE_ENV === 'dev') {
+		askwin.webContents.openDevTools()
+	}
 }
 
 let appIcon = null;
@@ -249,7 +255,10 @@ function init()
 		/* create window on mac by default, but hide it after created */
 		if (process.platform === 'darwin' && !win) {
 			createWin();
-			win.hide()
+			// show win at development env by default
+			if (process.env.NODE_ENV !== 'dev') {
+				win.hide()
+			}
 		}
 	});
 
