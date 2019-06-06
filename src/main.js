@@ -17,17 +17,20 @@ let win = null; /* main window */
 let askwin = null; /* ask window */
 
 /* Path config */
-const iconPath = path.join(__dirname, 'img/256x256.png');
+const iconPath = process.platform == 'darwin' ? path.join(__dirname, 'img/16x16.png') : path.join(__dirname, 'img/256x256.png');
 const autoPath = path.join(__dirname, 'config/auto.conf');
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
+const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
 const coreCfg = path.join(__dirname, 'core/config/client.conf');
 
 let corePath = null;
-
-if (process.platform == 'linux')
+if(process.platform == 'darwin'){
+	corePath = coreDarwin_32
+}
+else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
 	else corePath = coreLinux_32;
@@ -91,9 +94,19 @@ function createWin(){
 	win.setMenu(null);
 	const idx = path.join(__dirname, 'index.html');
 	win.loadURL('file://' + idx);
-	win.on('close', () => {
-		win = null;
-	});
+
+	win.on('close', (e) => {
+		// stop destroy win while running on mac os
+		if (process.platform === 'darwin') {
+			if (win.isVisible()) {
+				e.preventDefault()
+				win.hide()
+			}
+			return;
+		}
+		win = null
+	})
+	// if (process === 'darwin') win.hide()
 }
 
 function createAsk(){
@@ -119,6 +132,11 @@ let appIcon = null;
 
 var aut;
 
+function close() {
+	if (prc != null) prc.kill();
+	if (win != null) win.close();
+	if (askwin != null) askwin.close();
+}
 /* Make menu */
 
 function makeMenu()
@@ -174,7 +192,11 @@ function makeMenu()
 		{
 			label: '配置',
 			click: () => {
-				if (win == null) createWin();
+				if (win == null) {
+					createWin();
+					return
+				}
+				win.show()
 			}
 		},
 		{
@@ -193,10 +215,7 @@ function makeMenu()
 		{
 			label: '退出',
 			click: () => {
-				if (prc != null) prc.kill();
-				if (win != null) win.close();
-				if (askwin != null) askwin.close();
-				app.quit();
+				app.quit() // emit before-quit event
 			}
 		}
 	]);
@@ -206,7 +225,9 @@ function makeMenu()
 function createTray()
 {
 	appIcon = new Tray(iconPath);
-	appIcon.setTitle('Et-electron');
+	if (process.platform !== 'darwin'){
+		appIcon.setTitle('ET'); // shorter name , looks more graceful
+	}
 	appIcon.setContextMenu(makeMenu());
 	if (aut) make_prc();
 }
@@ -223,9 +244,15 @@ function init()
 				if (err) msg('无法写入 auto.conf!');
 				else aut = 0;
 			});
+		}
+
+		/* create window on mac by default, but hide it after created */
+		if (process.platform === 'darwin' && !win) {
 			createWin();
+			win.hide()
 		}
 	});
+
 	/* Check core config file */
 	fs.exists(coreCfg, function(exists) {
 		if (!exists)
@@ -233,8 +260,16 @@ function init()
 				if (err) msg('无法写入 client.conf!');
 			})
 	});
+
 	setTimeout(createTray, 1000);
 }
 
+
+
 app.on('ready', init);
 app.on('window-all-closed', e => e.preventDefault());
+app.on('activate', () => {(process.platform === 'darwin' && win) && win.show()})
+app.on('before-quit', (e) => {
+	close()
+})
+
