@@ -1,15 +1,16 @@
 /* Read and write config files */
 
 const {ipcRenderer} = require('electron');
-
+const {app} = require('electron').remote;
 const readline = require('readline');
 const fs = require('fs');
 
 const path = require('path');
 
 /* Path config */
-const cfgPath = path.join(__dirname, 'config/config.conf');
-const coreCfg = path.join(__dirname, 'core/config/client.conf');
+const configPath = path.join(app.getPath('userData'), 'config')
+const cfgPath = path.join(configPath, 'config.conf');
+const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 /* Get elements */
 var rmtip = document.getElementById('rmtip');
@@ -113,12 +114,12 @@ document.getElementById('save').addEventListener('click', function () {
 		else data += '\n0';
 		if (smart.checked) data += '\n1';
 		else data += '\n0';
-		
+
 		var fs = require('fs');
 		fs.writeFile(cfgPath, data, 'utf8', function(err) {
 			if (err) msg('无法写入 config.conf！'), flag = false;
 		});
-		
+
 		data = 'listen=';
 		if (share.checked) data += '0.0.0.0';
 		else data += '127.0.0.1';

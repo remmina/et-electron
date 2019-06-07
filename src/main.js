@@ -16,15 +16,24 @@ let win = null; /* main window */
 
 let askwin = null; /* ask window */
 
+
 /* Path config */
+
 const iconPath = process.platform == 'darwin' ? path.join(__dirname, 'img/16x16.png') : path.join(__dirname, 'img/256x256.png');
-const autoPath = path.join(__dirname, 'config/auto.conf');
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
 const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
-const coreCfg = path.join(__dirname, 'core/config/client.conf');
+
+const configPath = path.join(app.getPath('userData'), 'config')
+if (!fs.existsSync(configPath)) {
+	fs.mkdirSync(configPath)
+	fs.mkdirSync(path.join(configPath, 'core'))
+	copyDir(path.join(__dirname, 'core/config'), path.join(configPath, 'core/config'))
+}
+const autoPath = path.join(configPath, 'auto.conf');
+const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 let corePath = null;
 if(process.platform == 'darwin'){
@@ -287,15 +296,6 @@ function init()
 				else aut = 0;
 			});
 		}
-
-		/* create window on mac by default, but hide it after created */
-		if (process.platform === 'darwin' && !win) {
-			createWin();
-			// show win at development env by default
-			if (process.env.NODE_ENV !== 'dev') {
-				win.hide()
-			}
-		}
 	});
 
 	/* Check core config file */
@@ -306,9 +306,43 @@ function init()
 			})
 	});
 
+	/* create window on mac by default, but hide it after created */
+	if (process.platform === 'darwin' && !win) {
+		createWin();
+		// show win at development env by default
+		if (process.env.NODE_ENV !== 'dev') {
+			win.hide()
+		}
+	}
+
 	setTimeout(createTray, 1000);
 }
 
+function copyDir(src, dest) {
+	try {
+		fs.mkdirSync(dest, 0755);
+	} catch(e) {
+		if(e.code != "EEXIST") {
+			throw e;
+		}
+	}
+	let files = fs.readdirSync(src);
+	for(let file of files) {
+		let current = fs.lstatSync(path.join(src, file));
+		if(current.isDirectory()) {
+			copyDir(path.join(src, file), path.join(dest, file));
+		} else if(current.isSymbolicLink()) {
+			// make symlink
+			let symlink = fs.readlinkSync(path.join(src, file));
+			fs.symlinkSync(symlink, path.join(dest, file));
+		} else {
+			// copy file
+			let oldFile = fs.createReadStream(path.join(src, file));
+			let newFile = fs.createWriteStream(path.join(dest, file));
+			oldFile.pipe(newFile);
+		}
+	}
+}
 
 
 app.on('ready', init);
