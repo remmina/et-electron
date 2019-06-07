@@ -1,6 +1,6 @@
 {
   "name": "et-electron",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "eagle.tunnel client using electron",
   "main": "main.js",
   "scripts": {
