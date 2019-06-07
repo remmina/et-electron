@@ -14,8 +14,7 @@ const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
 const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
-
-const configPath = path.join(app.getPath('userData'), 'config')
+const configPath = process.platform == 'darwin' ? path.join(app.getPath('userData'), 'conf') : __dirname;
 const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 let corePath = null;

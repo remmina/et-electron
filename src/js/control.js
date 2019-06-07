@@ -8,8 +8,9 @@ const fs = require('fs');
 const path = require('path');
 
 /* Path config */
-const configPath = path.join(app.getPath('userData'), 'config')
-const cfgPath = path.join(configPath, 'config.conf');
+
+const configPath = process.platform == 'darwin' ? path.join(app.getPath('userData'), 'conf') : __dirname;
+const cfgPath = path.join(configPath, 'config/config.conf');
 const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 /* Get elements */
