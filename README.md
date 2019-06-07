@@ -2,7 +2,7 @@
 
 ![logo](ReadMeImg/logo.png)
 
- Eagle Tunnel with GUI for Linux and Windows
+ Eagle Tunnel with GUI for Linux, Windows, Mac
 
 基于：[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)开发
 
