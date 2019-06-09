@@ -98,7 +98,10 @@ function createWin(){
 		height : 440,
 		frame: false,
 		resizable: false,
-		icon : iconPath
+		icon : iconPath,
+		webPreferences: {
+            nodeIntegration: true
+        }
 	};
 	win = new BrowserWindow(winCfg);
 	//win.webContents.openDevTools();
@@ -130,7 +133,10 @@ function createAsk(){
 		height : 440,
 		frame: false,
 		resizable: false,
-		icon : iconPath
+		icon : iconPath,
+		webPreferences: {
+            nodeIntegration: true
+        }
 	};
 	askwin = new BrowserWindow(winCfg);
 	//askwin.webContents.openDevTools();
