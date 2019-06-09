@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.6.0';
+const appVersion = '1.6.4';
 
 let prc = null; /* et.go process */
 
