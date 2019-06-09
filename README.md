@@ -2,7 +2,7 @@
 
 ![logo](ReadMeImg/logo.png)
 
- Eagle Tunnel with GUI for Linux, Windows, Mac
+ Eagle Tunnel with GUI for Linux, Windows and Mac
 
 基于：[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)开发
 
@@ -30,7 +30,7 @@
 
 解压并覆盖原来的目录即可
 
-之前的配置文件将不会丢失
+在初次启动的时候会自动在系统的[userData](https://electronjs.org/docs/api/app#appgetpathname)`et-electron`目录创建`conf`存放配置，所以之前的配置文件将不会丢失
 
 # 使用
 
@@ -53,6 +53,14 @@
 接着按您的服务器配置设置您的程序配置即可。
 
 保存配置后连接会自动重启，无需断开重连
+
+配置文件保存的路径：
+
+* win: `%APPDATA\et-electron\conf`
+* linux: `~/.config/et-electron/conf`
+* mac: `~/Library/Application\ Support/et-electron/conf`
+
+如果需要增加自己的hosts，或者修改proxylist,可以到配置文目录里面core/config完成
 
 ## 连接/断开服务器
 
