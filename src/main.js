@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.5.3';
+const appVersion = '1.6.4';
 
 let prc = null; /* et.go process */
 
@@ -16,18 +16,32 @@ let win = null; /* main window */
 
 let askwin = null; /* ask window */
 
+
 /* Path config */
-const iconPath = path.join(__dirname, 'img/256x256.png');
-const autoPath = path.join(__dirname, 'config/auto.conf');
+
+const iconPath = process.platform == 'darwin' ? path.join(__dirname, 'img/16x16.png') : path.join(__dirname, 'img/256x256.png');
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
-const coreCfg = path.join(__dirname, 'core/config/client.conf');
+const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
+
+const configPath = path.join(app.getPath('userData'), 'conf');
+/* copy config files to userData folder avoid overwrite when upgrade*/
+if (!fs.existsSync(configPath)) {
+	fs.mkdirSync(configPath)
+	fs.mkdirSync(path.join(configPath, 'config'))
+	fs.mkdirSync(path.join(configPath, 'core'))
+	copyDir(path.join(__dirname, 'core/config'), path.join(configPath, 'core/config'))
+}
+const autoPath = path.join(configPath, 'config/auto.conf');
+const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 let corePath = null;
-
-if (process.platform == 'linux')
+if(process.platform == 'darwin'){
+	corePath = coreDarwin_32
+}
+else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
 	else corePath = coreLinux_32;
@@ -84,16 +98,32 @@ function createWin(){
 		height : 440,
 		frame: false,
 		resizable: false,
-		icon : iconPath
+		icon : iconPath,
+		webPreferences: {
+            nodeIntegration: true
+        }
 	};
 	win = new BrowserWindow(winCfg);
 	//win.webContents.openDevTools();
 	win.setMenu(null);
 	const idx = path.join(__dirname, 'index.html');
 	win.loadURL('file://' + idx);
-	win.on('close', () => {
-		win = null;
-	});
+
+	win.on('close', (e) => {
+		// stop destroy win while running on mac os
+		if (process.platform === 'darwin') {
+			if (win.isVisible()) {
+				e.preventDefault()
+				win.hide()
+			}
+			return;
+		}
+		win = null
+	})
+
+	if (process.env.NODE_ENV === 'dev') {
+		win.webContents.openDevTools()
+	}
 }
 
 function createAsk(){
@@ -103,7 +133,10 @@ function createAsk(){
 		height : 440,
 		frame: false,
 		resizable: false,
-		icon : iconPath
+		icon : iconPath,
+		webPreferences: {
+            nodeIntegration: true
+        }
 	};
 	askwin = new BrowserWindow(winCfg);
 	//askwin.webContents.openDevTools();
@@ -113,17 +146,36 @@ function createAsk(){
 	askwin.on('close', () => {
 		askwin = null;
 	});
+	if (process.env.NODE_ENV === 'dev') {
+		askwin.webContents.openDevTools()
+	}
 }
 
 let appIcon = null;
 
 var aut;
 
+let close = () => {
+	if (prc != null) prc.kill();
+	if (win != null) win.close();
+	if (askwin != null) askwin.close();
+}
+
+let click = () => {
+	var tmp = 'Eagle Tunnel with GUI for Linux, Windows and Mac \n\n';
+	tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
+	tmp += 'Core version information :\n\n';
+	var vprc = spawn(corePath, ['-v']);
+	vprc.stdout.on('data', (data) => {
+		tmp += data.toString();
+	});
+	setTimeout(function() { msg(tmp); }, 500);
+}
 /* Make menu */
 
 function makeMenu()
 {
-	return Menu.buildFromTemplate([
+	const template = [
 		{
 			label: '操作',
 			submenu: [
@@ -174,39 +226,67 @@ function makeMenu()
 		{
 			label: '配置',
 			click: () => {
-				if (win == null) createWin();
+				if (win == null) {
+					createWin();
+					return
+				}
+				win.show()
 			}
 		},
 		{
 			label: '关于',
-			click: () => {
-				var tmp = 'Eagle Tunnel with GUI for Linux and Windows\n\n';
-				tmp += 'By Remmina\n\nVersion : ' + appVersion + '\n\n';
-				tmp += 'Core version information :\n\n';
-				var vprc = spawn(corePath, ['-v']);
-				vprc.stdout.on('data', (data) => {
-					tmp += data.toString();
-				});
-				setTimeout(function() { msg(tmp); }, 500);
-			}
+			click: click
 		},
 		{
 			label: '退出',
 			click: () => {
-				if (prc != null) prc.kill();
-				if (win != null) win.close();
-				if (askwin != null) askwin.close();
-				app.quit();
+				app.quit() // emit before-quit event
 			}
 		}
-	]);
+	]
+	if (process.platform === 'darwin') {
+		const systemMenu = Menu.buildFromTemplate([
+			{
+				label: app.getName(),
+				submenu: [
+					{label: 'about', click},
+					{type: 'separator'},
+					{role: 'services', submenu: []},
+					{type: 'separator'},
+					{role: 'hide'},
+					{role: 'hideothers'},
+					{role: 'unhide'},
+					{type: 'separator'},
+					{role: 'quit'}
+				]
+			},
+			{
+				label: '编辑',
+				submenu: [
+					{role: 'undo', label: '撤销'},
+					{role: 'redo', label: '重做'},
+					{type: 'separator'},
+					{role: 'cut', label: '剪切'},
+					{role: 'copy', label: '复制'},
+					{role: 'paste', label: '粘贴'},
+					{role: 'delete', label: '删除'},
+					{role: 'selectall', label: '全选'}
+				]
+			}
+		])
+		Menu.setApplicationMenu(systemMenu)
+	}
+
+	return Menu.buildFromTemplate(template);
 }
 
 /* Creat tray icon */
 function createTray()
 {
 	appIcon = new Tray(iconPath);
-	appIcon.setTitle('Et-electron');
+	if (process.platform !== 'darwin'){
+		appIcon.setTitle('ET'); // shorter name , looks more graceful
+	}
 	appIcon.setContextMenu(makeMenu());
 	if (aut) make_prc();
 }
@@ -223,9 +303,9 @@ function init()
 				if (err) msg('无法写入 auto.conf!');
 				else aut = 0;
 			});
-			createWin();
 		}
 	});
+
 	/* Check core config file */
 	fs.exists(coreCfg, function(exists) {
 		if (!exists)
@@ -233,8 +313,50 @@ function init()
 				if (err) msg('无法写入 client.conf!');
 			})
 	});
+
+	/* create window on mac by default, but hide it after created */
+	if (process.platform === 'darwin' && !win) {
+		createWin();
+		// show win at development env by default
+		if (process.env.NODE_ENV !== 'dev') {
+			win.hide()
+		}
+	}
+
 	setTimeout(createTray, 1000);
 }
 
+function copyDir(src, dest) {
+	try {
+		fs.mkdirSync(dest, 0755);
+	} catch(e) {
+		if(e.code != "EEXIST") {
+			throw e;
+		}
+	}
+	let files = fs.readdirSync(src);
+	for(let file of files) {
+		let current = fs.lstatSync(path.join(src, file));
+		if(current.isDirectory()) {
+			copyDir(path.join(src, file), path.join(dest, file));
+		} else if(current.isSymbolicLink()) {
+			// make symlink
+			let symlink = fs.readlinkSync(path.join(src, file));
+			fs.symlinkSync(symlink, path.join(dest, file));
+		} else {
+			// copy file
+			let oldFile = fs.createReadStream(path.join(src, file));
+			let newFile = fs.createWriteStream(path.join(dest, file));
+			oldFile.pipe(newFile);
+		}
+	}
+}
+
+
 app.on('ready', init);
 app.on('window-all-closed', e => e.preventDefault());
+app.on('activate', () => {(process.platform === 'darwin' && win) && win.show()})
+app.on('before-quit', (e) => {
+	close()
+})
+

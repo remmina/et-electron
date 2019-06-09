@@ -2,7 +2,7 @@
 
 ![logo](ReadMeImg/logo.png)
 
- Eagle Tunnel with GUI for Linux and Windows
+ Eagle Tunnel with GUI for Linux, Windows and Mac
 
 基于：[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)开发
 
@@ -22,6 +22,7 @@
 
 + Linux 64/32 位
 + Windows 64/32 位
++ mac
 
 # 更新
 
@@ -29,7 +30,7 @@
 
 解压并覆盖原来的目录即可
 
-之前的配置文件将不会丢失
+在初次启动的时候会自动在系统的[userData](https://electronjs.org/docs/api/app#appgetpathname)`et-electron`目录创建`conf`存放配置，所以之前的配置文件将不会丢失
 
 # 使用
 
@@ -37,6 +38,7 @@
 
 + Linux : 双击打开`et-electron`
 + Windows : 双击打开`et-electron.exe`
++ Mac : 双击打开`et-electron.app` 建议启动后，可以在dock里面选择'登录时打开'，默认每次自动开启
 
 启动程序后程序将默认后台运行，您可以在系统托盘图标中找到它。
 
@@ -51,6 +53,14 @@
 接着按您的服务器配置设置您的程序配置即可。
 
 保存配置后连接会自动重启，无需断开重连
+
+配置文件保存的路径：
+
+* win: `%APPDATA\et-electron\conf`
+* linux: `~/.config/et-electron/conf`
+* mac: `~/Library/Application\ Support/et-electron/conf`
+
+如果需要增加自己的hosts，或者修改proxylist,可以到配置文目录里面core/config完成
 
 ## 连接/断开服务器
 
@@ -107,6 +117,8 @@ Linux系统设置开机启动项可以在首选项->启动应用程序中添加
 ![](./ReadMeImg/shot3.png)
 
 ![](./ReadMeImg/shot4.png)
+
+![](./ReadMeImg/macos.png)
 
 # 鸣谢
 

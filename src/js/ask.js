@@ -1,21 +1,28 @@
 /* Ask local .. program */
 
 const {ipcRenderer} = require('electron');
+const {app} = require('electron').remote;
 
 const spawn = require('child_process').spawn;
 
 const path = require('path');
+const fs = require('fs');
 
 /* Path config */
 const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
-const coreCfg = path.join(__dirname, 'core/config/client.conf');
+const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
+const configPath = path.join(app.getPath('userData'), 'conf');
+const coreCfg = path.join(configPath, 'core/config/client.conf');
 
 let corePath = null;
 
-if (process.platform == 'linux')
+if(process.platform == 'darwin'){
+	corePath = coreDarwin_32
+}
+else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
 	else corePath = coreLinux_32;
@@ -40,6 +47,10 @@ document.getElementById('auth').addEventListener('click', function () {
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
+	prc.stderr.on('data', (data) => {
+		// for debug
+		console.log(data.toString())
+	})
 });
 
 /* Clicked version button */
