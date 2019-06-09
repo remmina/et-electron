@@ -26,9 +26,9 @@ const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
 const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
 
-const configPath = process.platform == 'darwin' ? path.join(app.getPath('userData'), 'conf') : __dirname;
+const configPath = path.join(app.getPath('userData'), 'conf');
 /* copy config files to userData folder avoid overwrite when upgrade*/
-if (process.platform == 'darwin' && !fs.existsSync(configPath)) {
+if (!fs.existsSync(configPath)) {
 	fs.mkdirSync(configPath)
 	fs.mkdirSync(path.join(configPath, 'config'))
 	fs.mkdirSync(path.join(configPath, 'core'))
