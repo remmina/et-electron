@@ -13,15 +13,14 @@ const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
-const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
-const configPath = path.join(app.getPath('userData'), 'conf');
-const coreCfg = path.join(configPath, 'core/config/client.conf');
+const coreDarwin = path.join(__dirname, 'core/et.go.darwin');
+const listDir = path.join(__dirname, 'core/config');
+const cfgDir = path.join(app.getPath('userData'), 'config');
+const coreCfg = path.join(cfgDir, 'client.conf');
 
 let corePath = null;
 
-if(process.platform == 'darwin'){
-	corePath = coreDarwin_32
-}
+if(process.platform == 'darwin') corePath = coreDarwin;
 else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
@@ -43,7 +42,7 @@ var output = document.getElementById('output');
 document.getElementById('auth').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	prc = spawn(corePath, ['check', 'auth', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'auth', '--config', coreCfg, '--config-dir', listDir]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
@@ -57,7 +56,7 @@ document.getElementById('auth').addEventListener('click', function () {
 document.getElementById('vers').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	prc = spawn(corePath, ['check', 'version', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'version', '--config', coreCfg, '--config-dir', listDir]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});
@@ -67,7 +66,7 @@ document.getElementById('vers').addEventListener('click', function () {
 document.getElementById('ping').addEventListener('click', function () {
 	output.value = "";
 	if (prc != null) prc.kill();
-	prc = spawn(corePath, ['check', 'ping', '-c', coreCfg]);
+	prc = spawn(corePath, ['check', 'ping', '--config', coreCfg, '--config-dir', listDir]);
 	prc.stdout.on('data', (data) => {
 		output.value += data.toString();
 	});

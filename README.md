@@ -22,7 +22,7 @@
 
 + Linux 64/32 位
 + Windows 64/32 位
-+ mac
++ Mac 64 位
 
 # 更新
 
@@ -30,7 +30,7 @@
 
 解压并覆盖原来的目录即可
 
-在初次启动的时候会自动在系统的[userData](https://electronjs.org/docs/api/app#appgetpathname)`et-electron`目录创建`conf`存放配置，所以之前的配置文件将不会丢失
+配置将会被保存在[userData](https://electronjs.org/docs/api/app#appgetpathname)目录下的`et-electron/config`目录中，因此配置文件不会因为覆盖更新而丢失
 
 # 使用
 
@@ -38,7 +38,7 @@
 
 + Linux : 双击打开`et-electron`
 + Windows : 双击打开`et-electron.exe`
-+ Mac : 双击打开`et-electron.app` 建议启动后，可以在dock里面选择'登录时打开'，默认每次自动开启
++ Mac : 双击打开`et-electron.app`
 
 启动程序后程序将默认后台运行，您可以在系统托盘图标中找到它。
 
@@ -56,11 +56,9 @@
 
 配置文件保存的路径：
 
-* win: `%APPDATA\et-electron\conf`
-* linux: `~/.config/et-electron/conf`
-* mac: `~/Library/Application\ Support/et-electron/conf`
-
-如果需要增加自己的hosts，或者修改proxylist,可以到配置文目录里面core/config完成
+* win: `%APPDATA\et-electron\config`
+* linux: `~/.config/et-electron/config`
+* mac: `~/Library/Application\ Support/et-electron/config`
 
 ## 连接/断开服务器
 
@@ -79,6 +77,8 @@
 Windows系统设置开机启动项可以用注册表添加
 
 Linux系统设置开机启动项可以在首选项->启动应用程序中添加
+
+Mac系统设置开机启动项可以在程序启动后，在dock里面选择'登录时打开'
 
 ## 测试服务(check)
 
@@ -118,8 +118,6 @@ Linux系统设置开机启动项可以在首选项->启动应用程序中添加
 
 ![](./ReadMeImg/shot4.png)
 
-![](./ReadMeImg/macos.png)
-
 # 鸣谢
 
 感谢[eaglexiang](https://github.com/eaglexiang/eagle.tunnel.go/commits?author=eaglexiang)大佬开发的[eagle.tunnel.go](https://github.com/eaglexiang/eagle.tunnel.go)项目，没有这个项目便没有ET-electron。~~这不是废话吗~~
@@ -127,11 +125,3 @@ Linux系统设置开机启动项可以在首选项->启动应用程序中添加
 感谢[electron项目](https://github.com/electron/electron)，没有这个项目作者便不会接触到js。
 
 感谢[MDUI项目](https://github.com/zdhxiong/mdui)，提供了美观的前端框架以及详细的开发文档。
-
-
-
-# 打赏
-
-+ 微信：作者没有
-+ 支付宝：作者也没有
-+ 倒是可以去[作者博客](https://www.mina.moe/)串串门QwQ

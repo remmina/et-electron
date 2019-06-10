@@ -8,14 +8,13 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '1.6.4';
+const appVersion = '2.0.0';
 
 let prc = null; /* et.go process */
 
 let win = null; /* main window */
 
 let askwin = null; /* ask window */
-
 
 /* Path config */
 
@@ -24,23 +23,15 @@ const coreLinux = path.join(__dirname, 'core/et.go.linux');
 const coreLinux_32 = path.join(__dirname, 'core/et.go.32.linux');
 const coreWin = path.join(__dirname, 'core/et.go.exe');
 const coreWin_32 = path.join(__dirname, 'core/et.go.32.exe');
-const coreDarwin_32 =  path.join(__dirname, 'core/et.go');
-
-const configPath = path.join(app.getPath('userData'), 'conf');
-/* copy config files to userData folder avoid overwrite when upgrade*/
-if (!fs.existsSync(configPath)) {
-	fs.mkdirSync(configPath)
-	fs.mkdirSync(path.join(configPath, 'config'))
-	fs.mkdirSync(path.join(configPath, 'core'))
-	copyDir(path.join(__dirname, 'core/config'), path.join(configPath, 'core/config'))
-}
-const autoPath = path.join(configPath, 'config/auto.conf');
-const coreCfg = path.join(configPath, 'core/config/client.conf');
+const coreDarwin = path.join(__dirname, 'core/et.go.darwin');
+const listDir = path.join(__dirname, 'core/config');
+const cfgDir = path.join(app.getPath('userData'), 'config');
+const autoPath = path.join(cfgDir, 'auto.conf');
+const coreCfg = path.join(cfgDir, 'client.conf');
 
 let corePath = null;
-if(process.platform == 'darwin'){
-	corePath = coreDarwin_32
-}
+
+if(process.platform == 'darwin') corePath = coreDarwin;
 else if (process.platform == 'linux')
 {
 	if (process.arch == 'x64') corePath = coreLinux;
@@ -68,7 +59,7 @@ function msg(str)
 /* Create Child Process */
 function make_prc()
 {
-	if (prc == null) prc = spawn(corePath, ['--config', coreCfg]);
+	if (prc == null) prc = spawn(corePath, ['--config', coreCfg, '--config-dir', listDir]);
 }
 
 /* Received a message */
@@ -91,7 +82,8 @@ ipcMain.on('close-ask', (event, arg) => {
 	askwin.close();
 })
 
-function createWin(){
+function createWin()
+{
 	const winCfg =
 	{
 		width : 340,
@@ -104,26 +96,21 @@ function createWin(){
         }
 	};
 	win = new BrowserWindow(winCfg);
-	//win.webContents.openDevTools();
 	win.setMenu(null);
 	const idx = path.join(__dirname, 'index.html');
 	win.loadURL('file://' + idx);
 
 	win.on('close', (e) => {
-		// stop destroy win while running on mac os
-		if (process.platform === 'darwin') {
-			if (win.isVisible()) {
-				e.preventDefault()
-				win.hide()
-			}
+		/* Stop destroy win while running on mac os */
+		if (process.platform === 'darwin')
+		{
+			if (win.isVisible()) e.preventDefault(), win.hide();
 			return;
 		}
 		win = null
 	})
 
-	if (process.env.NODE_ENV === 'dev') {
-		win.webContents.openDevTools()
-	}
+	if (process.env.NODE_ENV === 'dev') win.webContents.openDevTools()
 }
 
 function createAsk(){
@@ -294,6 +281,16 @@ function createTray()
 /* Init */
 function init()
 {
+	/* Check config directory */
+	fs.exists(autoPath, function(exists){
+		if (!exists)
+		{
+			fs.mkdir(cfgDir, function(err){
+				if (err) msg('无法创建配置文件目录!');
+			 });
+		}
+	});
+
 	/* Check auto connect config file */
 	fs.exists(autoPath, function(exists){
 		if (exists) aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
@@ -314,42 +311,14 @@ function init()
 			})
 	});
 
-	/* create window on mac by default, but hide it after created */
-	if (process.platform === 'darwin' && !win) {
+	/* Create window on mac by default, but hide it after created */
+	if (process.platform === 'darwin' && !win)
+	{
 		createWin();
-		// show win at development env by default
-		if (process.env.NODE_ENV !== 'dev') {
-			win.hide()
-		}
+		/* Show win at development env by default */
+		if (process.env.NODE_ENV !== 'dev') win.hide();
 	}
-
 	setTimeout(createTray, 1000);
-}
-
-function copyDir(src, dest) {
-	try {
-		fs.mkdirSync(dest, 0755);
-	} catch(e) {
-		if(e.code != "EEXIST") {
-			throw e;
-		}
-	}
-	let files = fs.readdirSync(src);
-	for(let file of files) {
-		let current = fs.lstatSync(path.join(src, file));
-		if(current.isDirectory()) {
-			copyDir(path.join(src, file), path.join(dest, file));
-		} else if(current.isSymbolicLink()) {
-			// make symlink
-			let symlink = fs.readlinkSync(path.join(src, file));
-			fs.symlinkSync(symlink, path.join(dest, file));
-		} else {
-			// copy file
-			let oldFile = fs.createReadStream(path.join(src, file));
-			let newFile = fs.createWriteStream(path.join(dest, file));
-			oldFile.pipe(newFile);
-		}
-	}
 }
 
 
@@ -359,4 +328,3 @@ app.on('activate', () => {(process.platform === 'darwin' && win) && win.show()})
 app.on('before-quit', (e) => {
 	close()
 })
-

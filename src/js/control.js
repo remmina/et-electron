@@ -9,9 +9,9 @@ const path = require('path');
 
 /* Path config */
 
-const configPath = path.join(app.getPath('userData'), 'conf');
-const cfgPath = path.join(configPath, 'config/config.conf');
-const coreCfg = path.join(configPath, 'core/config/client.conf');
+const cfgDir = path.join(app.getPath('userData'), 'config');
+const cfgPath = path.join(cfgDir, 'config.conf');
+const coreCfg = path.join(cfgDir, 'client.conf');
 
 /* Get elements */
 var rmtip = document.getElementById('rmtip');
