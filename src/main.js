@@ -393,14 +393,14 @@ function init()
 			try
 			{
 				aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
-				createTray();
+				setTimeout(createTray, 1000);
 			}
 			catch (err) { msg('无法读取 auto.conf!'), app.quit(); }
 		else
 			try
 			{
-				fs.writeFile(autoPath, '0', 'utf-8');
-				aut = 0, createTray();
+				fs.writeFileSync(autoPath, '0', 'utf-8');
+				aut = 0, setTimeout(createTray, 1000);
 			}
 			catch (err) { msg('无法写入 auto.conf!'), app.quit(); }
 	});
