@@ -117,9 +117,8 @@ document.getElementById('save').addEventListener('click', function () {
 		else data += '\n0';
 
 		var fs = require('fs');
-		fs.writeFile(cfgPath, data, 'utf8', function(err) {
-			if (err) msg('无法写入 config.conf！'), flag = false;
-		});
+		try { fs.writeFileSync(cfgPath, data, 'utf-8'); }
+		catch (err) { msg('无法写入 config.conf！'), flag = false; }
 
 		data = 'listen=';
 		if (share.checked) data += '0.0.0.0';
@@ -139,11 +138,9 @@ document.getElementById('save').addEventListener('click', function () {
 			if (speed.value != '') data += ':' + speed.value + '\net = on\nspeed-check = on';
 			data += '\n';
 		}
-		fs.writeFile(coreCfg, data, 'utf-8', function(err) {
-			if (err) msg('无法写入 client.conf!'), flag = false;
-		});
+		try { fs.writeFileSync(coreCfg, data, 'utf-8'), reconnect(); }
+		catch (err) { msg('无法写入 client.conf!'), flag = false; }
 		if (flag == true) msg('保存配置成功');
-		setTimeout(reconnect, 1000);
 	}
 });
 

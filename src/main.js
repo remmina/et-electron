@@ -1,6 +1,6 @@
 /* Main program of et-electron */
 
-const {app, BrowserWindow, Menu, Tray, ipcMain, dialog} = require('electron');
+const {app, BrowserWindow, Menu, Tray, ipcMain, dialog, shell} = require('electron');
 
 const path = require('path');
 
@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '2.0.0';
+const appVersion = '2.0.1';
 
 let prc = null; /* et.go process */
 
@@ -28,6 +28,12 @@ const listDir = path.join(__dirname, 'core/config');
 const cfgDir = path.join(app.getPath('userData'), 'config');
 const autoPath = path.join(cfgDir, 'auto.conf');
 const coreCfg = path.join(cfgDir, 'client.conf');
+const customProxy = path.join(cfgDir, 'proxy.txt');
+const customDirect = path.join(cfgDir, 'direct.txt');
+const customHosts = path.join(cfgDir, 'hosts.txt');
+const copyProxy = path.join(listDir, 'proxylists/custom.txt');
+const copyDirect = path.join(listDir, 'directlists/custom.txt');
+const copyHosts = path.join(listDir, 'hosts/custom.hosts');
 
 let corePath = null;
 
@@ -56,10 +62,22 @@ function msg(str)
 	dialog.showMessageBox(options);
 }
 
+/* Copy file */
+function copyFile(src, dest)
+{
+	var data = null;
+	try { data = fs.readFileSync(src, 'utf-8'); }
+	catch(err) { msg('无法复制文件!'); return 0; }
+	try { fs.writeFileSync(dest, data, 'utf-8'); }
+	catch(err) { msg('无法复制文件!'); return 0; }
+	return 1;
+}
+
 /* Create Child Process */
 function make_prc()
 {
-	if (prc == null) prc = spawn(corePath, ['--config', coreCfg, '--config-dir', listDir]);
+	if (prc == null && copyFile(customProxy, copyProxy) && copyFile(customDirect, copyDirect) && copyFile(customHosts, copyHosts))
+		prc = spawn(corePath, ['--config', coreCfg, '--config-dir', listDir]);
 }
 
 /* Received a message */
@@ -67,9 +85,14 @@ ipcMain.on('asynchronous-message', (event, arg) => {
 	msg(arg);
 })
 
+function reconnect()
+{
+	if (prc != null) prc.kill(), prc = null, make_prc();
+}
+
 /* Reconnect */
 ipcMain.on('reconnect-message', (event, arg) => {
-	if (prc != null) prc.kill(), prc = null, make_prc();
+	reconnect();
 })
 
 /* Clicked main window's close button */
@@ -156,7 +179,7 @@ let click = () => {
 	vprc.stdout.on('data', (data) => {
 		tmp += data.toString();
 	});
-	setTimeout(function() { msg(tmp); }, 500);
+	setTimeout(function() { msg(tmp); }, 1000);
 }
 /* Make menu */
 
@@ -184,6 +207,10 @@ function makeMenu()
 						if (prc != null) prc.kill();
 						prc = null;
 					}
+				},
+				{
+					label: '重连',
+					click: () => { reconnect(); }
 				}
 			]
 		},
@@ -219,6 +246,29 @@ function makeMenu()
 				}
 				win.show()
 			}
+		},
+		{
+			label: '自定义',
+			submenu: [
+				{
+					label: 'proxy list',
+					click: () => {
+						shell.openItem(customProxy);
+					}
+				},
+				{
+					label: 'direct list',
+					click: () => {
+						shell.openItem(customDirect);
+					}
+				},
+				{
+					label: 'hosts',
+					click: () => {
+						shell.openItem(customHosts);
+					}
+				},
+			]
 		},
 		{
 			label: '关于',
@@ -286,19 +336,37 @@ function init()
 		if (!exists)
 		{
 			fs.mkdir(cfgDir, function(err){
-				if (err) msg('无法创建配置文件目录!');
+				if (err) msg('无法创建配置文件目录!'), app.quit();
 			 });
 		}
 	});
 
-	/* Check auto connect config file */
-	fs.exists(autoPath, function(exists){
-		if (exists) aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
-		else
+	/* Check custom proxy list file */
+	fs.exists(customProxy, function(exists){
+		if (!exists)
 		{
-			fs.writeFile(autoPath, '0', 'utf-8', function(err) {
-				if (err) msg('无法写入 auto.conf!');
-				else aut = 0;
+			fs.writeFile(customProxy, '', 'utf-8', function(err) {
+				if (err) msg('无法写入自定义 proxy list 文件!'), app.quit();
+			});
+		}
+	});
+
+	/* Check custom direct list file */
+	fs.exists(customDirect, function(exists){
+		if (!exists)
+		{
+			fs.writeFile(customDirect, '', 'utf-8', function(err) {
+				if (err) msg('无法写入自定义 direct list 文件!'), app.quit();
+			});
+		}
+	});
+
+	/* Check custom hosts file */
+	fs.exists(customHosts, function(exists){
+		if (!exists)
+		{
+			fs.writeFile(customHosts, '', 'utf-8', function(err) {
+				if (err) msg('无法写入自定义 direct list 文件!'), app.quit();
 			});
 		}
 	});
@@ -307,7 +375,7 @@ function init()
 	fs.exists(coreCfg, function(exists) {
 		if (!exists)
 			fs.writeFile(coreCfg, 'listen=0.0.0.0', 'utf-8', function(err) {
-				if (err) msg('无法写入 client.conf!');
+				if (err) msg('无法写入 client.conf!'), app.quit();
 			})
 	});
 
@@ -318,9 +386,25 @@ function init()
 		/* Show win at development env by default */
 		if (process.env.NODE_ENV !== 'dev') win.hide();
 	}
-	setTimeout(createTray, 1000);
-}
 
+	/* Check auto connect config file */
+	fs.exists(autoPath, function(exists){
+		if (exists)
+			try
+			{
+				aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
+				createTray();
+			}
+			catch (err) { msg('无法读取 auto.conf!'), app.quit(); }
+		else
+			try
+			{
+				fs.writeFile(autoPath, '0', 'utf-8');
+				aut = 0, createTray();
+			}
+			catch (err) { msg('无法写入 auto.conf!'), app.quit(); }
+	});
+}
 
 app.on('ready', init);
 app.on('window-all-closed', e => e.preventDefault());

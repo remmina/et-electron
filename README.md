@@ -60,11 +60,13 @@
 * linux: `~/.config/et-electron/config`
 * mac: `~/Library/Application\ Support/et-electron/config`
 
-## 连接/断开服务器
+## 连接/断开/重连服务器
 
 点击托盘图标。
 
-在弹出来的菜单中选择“操作 => 连接/断开”即可。
+在弹出来的菜单中选择“操作 => 连接/断开/重连”即可。
+
+重连操作仅当处于“连接”状态时有效，会断开您当前的链接并新建一个链接。
 
 ## 自动连接
 
@@ -99,6 +101,24 @@ Mac系统设置开机启动项可以在程序启动后，在dock里面选择'登
 单击“PING”按钮将会调用内建指令：`[et.go] check ping -c [client.conf]`
 
 调用指令的返回结果将会在界面中的“ET输出”文本框内实时显示。
+
+## 自定义
+
+这个功能使得用户可以自定义：
+
++ 代理域名列表(proxy list)
++ 直连域名列表(direct list)
++ hosts 文件
+
+具体可以参见[ET 配置](https://github.com/eaglexiang/eagle.tunnel.go/blob/master/docs/config.md)
+
+简单来说，您可以将自己常用的国内网站（如百度）添加进 direct list 中，而常用的国外网站（如谷歌）添加进 proxy list 中，以提升 et 在智能模式下对这些站点的**定位速度**。et 将会对访问的地址与列表中的内容进行**后缀匹配**，也就是说如果列表中有“google.com”，那么“translate.google.com”、“www.google.com”等都会被识别到。
+
+（hosts 文件的作用就不做赘述了）
+
+基本上所有的常用网站都已包含在 et 自带的 proxy list 与 direct list 中了，具体可以参见 [https://github.com/remmina/proxy-list](https://github.com/remmina/proxy-list)，若对自带列表有增加建议可在此项目中提交 pr。
+
+请注意，自定义文件需要重连 et 才能生效，请在保存自定义文件后选择“操作 => 重连”使得修改生效。
 
 ## 查看程序及内核版本
 
