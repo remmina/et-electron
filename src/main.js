@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const spawn = require('child_process').spawn;
 
-const appVersion = '2.0.1';
+const appVersion = '2.0.2';
 
 let prc = null; /* et.go process */
 
@@ -332,52 +332,30 @@ function createTray()
 function init()
 {
 	/* Check config directory */
-	fs.exists(autoPath, function(exists){
-		if (!exists)
-		{
-			fs.mkdir(cfgDir, function(err){
-				if (err) msg('无法创建配置文件目录!'), app.quit();
-			 });
-		}
-	});
+	if (!fs.existsSync(cfgDir))
+		try
+		{ fs.mkdirSync(cfgDir); }
+		catch (err) { msg('无法创建配置文件目录!'), app.quit(); }
 
 	/* Check custom proxy list file */
-	fs.exists(customProxy, function(exists){
-		if (!exists)
-		{
-			fs.writeFile(customProxy, '', 'utf-8', function(err) {
-				if (err) msg('无法写入自定义 proxy list 文件!'), app.quit();
-			});
-		}
-	});
+	if (!fs.existsSync(customProxy))
+		try { fs.writeFileSync(customProxy, '', 'utf-8'); }
+		catch (err) { msg('无法写入自定义 proxy list 文件!'), app.quit(); }
 
 	/* Check custom direct list file */
-	fs.exists(customDirect, function(exists){
-		if (!exists)
-		{
-			fs.writeFile(customDirect, '', 'utf-8', function(err) {
-				if (err) msg('无法写入自定义 direct list 文件!'), app.quit();
-			});
-		}
-	});
+	if (!fs.existsSync(customDirect))
+		try { fs.writeFileSync(customDirect, '', 'utf-8'); }
+		catch (err) { msg('无法写入自定义 direct list 文件!'), app.quit(); }
 
 	/* Check custom hosts file */
-	fs.exists(customHosts, function(exists){
-		if (!exists)
-		{
-			fs.writeFile(customHosts, '', 'utf-8', function(err) {
-				if (err) msg('无法写入自定义 direct list 文件!'), app.quit();
-			});
-		}
-	});
+	if (!fs.existsSync(customHosts))
+		try { fs.writeFileSync(customHosts, '', 'utf-8'); }
+		catch (err) { msg('无法写入自定义 hosts 文件!'), app.quit(); }
 
 	/* Check core config file */
-	fs.exists(coreCfg, function(exists) {
-		if (!exists)
-			fs.writeFile(coreCfg, 'listen=0.0.0.0', 'utf-8', function(err) {
-				if (err) msg('无法写入 client.conf!'), app.quit();
-			})
-	});
+	if (!fs.existsSync(coreCfg))
+		try { fs.writeFileSync(coreCfg, 'listen=0.0.0.0', 'utf-8'); }
+		catch (err) { msg('无法写入 client.conf!'), app.quit(); }
 
 	/* Create window on mac by default, but hide it after created */
 	if (process.platform === 'darwin' && !win)
@@ -388,22 +366,19 @@ function init()
 	}
 
 	/* Check auto connect config file */
-	fs.exists(autoPath, function(exists){
-		if (exists)
-			try
-			{
-				aut = parseInt(fs.readFileSync(autoPath, 'utf-8'));
-				setTimeout(createTray, 1000);
-			}
-			catch (err) { msg('无法读取 auto.conf!'), app.quit(); }
-		else
-			try
-			{
-				fs.writeFileSync(autoPath, '0', 'utf-8');
-				aut = 0, setTimeout(createTray, 1000);
-			}
-			catch (err) { msg('无法写入 auto.conf!'), app.quit(); }
-	});
+	if (fs.existsSync(autoPath))
+		try
+		{
+			aut = parseInt(fs.readFileSync(autoPath, 'utf-8')), createTray();
+		}
+		catch (err) { msg('无法读取 auto.conf!'), app.quit(); }
+	else
+		try
+		{
+			fs.writeFileSync(autoPath, '0', 'utf-8');
+			aut = 0, createTray();
+		}
+		catch (err) { msg('无法写入 auto.conf!'), app.quit(); }
 }
 
 app.on('ready', init);
