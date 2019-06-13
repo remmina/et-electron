@@ -357,14 +357,6 @@ function init()
 		try { fs.writeFileSync(coreCfg, 'listen=0.0.0.0', 'utf-8'); }
 		catch (err) { msg('无法写入 client.conf!'), app.quit(); }
 
-	/* Create window on mac by default, but hide it after created */
-	if (process.platform === 'darwin' && !win)
-	{
-		createWin();
-		/* Show win at development env by default */
-		if (process.env.NODE_ENV !== 'dev') win.hide();
-	}
-
 	/* Check auto connect config file */
 	if (fs.existsSync(autoPath))
 		try
@@ -376,7 +368,7 @@ function init()
 		try
 		{
 			fs.writeFileSync(autoPath, '0', 'utf-8');
-			aut = 0, createTray();
+			aut = 0, createWin(), createTray();
 		}
 		catch (err) { msg('无法写入 auto.conf!'), app.quit(); }
 }
